@@ -1,0 +1,36 @@
+name: Deploy & Notify
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Inject build timestamp
+        run: |
+          BUILD_TIME=$(TZ='Asia/Shanghai' date '+%Y-%m-%d %H:%M:%S CST')
+          COMMIT_MSG="${{ github.event.head_commit.message }}"
+          sed -i "s|document.getElementById('time').*|document.getElementById('time').textContent = '$BUILD_TIME';|" index.html
+          echo "<meta name='build-commit' content='${{ github.sha }}'>" >> index.html
+          echo "✅ Build time injected: $BUILD_TIME"
+
+      - name: Commit updated page
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --staged --quiet || git commit -m "ci: update build timestamp [skip ci]"
+          git push
+
+      - name: Summary
+        run: |
+          echo "## 🚀 Deployed!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **URL**: https://test.steveouyang.com" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Triggered by**: ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
