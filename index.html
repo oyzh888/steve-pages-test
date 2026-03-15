@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Steve's Test Page</title>
+  <style>
+    body {
+      font-family: -apple-system, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: white;
+      text-align: center;
+    }
+    .card {
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 40px 60px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    }
+    h1 { font-size: 2.5em; margin-bottom: 10px; }
+    p { font-size: 1.2em; opacity: 0.9; }
+    .badge { 
+      display: inline-block;
+      background: rgba(255,255,255,0.3);
+      border-radius: 20px;
+      padding: 6px 16px;
+      margin-top: 20px;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>🚀 Steve's CF Pages</h1>
+    <p>Cloudflare Pages 测试成功！</p>
+    <p>部署时间：<span id="time"></span></p>
+    <div class="badge">⚡ Deployed on Cloudflare Pages</div>
+  </div>
+  <script>
+    document.getElementById('time').textContent = new Date().toLocaleString('zh-CN', {timeZone: 'Asia/Shanghai'});
+  </script>
+</body>
+</html>
