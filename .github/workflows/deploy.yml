@@ -4,19 +4,22 @@ on:
   push:
     branches: [main]
 
+permissions:
+  contents: write   # ← 关键：允许 bot 写回 repo
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Inject build timestamp
         run: |
           BUILD_TIME=$(TZ='Asia/Shanghai' date '+%Y-%m-%d %H:%M:%S CST')
-          COMMIT_MSG="${{ github.event.head_commit.message }}"
           sed -i "s|document.getElementById('time').*|document.getElementById('time').textContent = '$BUILD_TIME';|" index.html
-          echo "<meta name='build-commit' content='${{ github.sha }}'>" >> index.html
           echo "✅ Build time injected: $BUILD_TIME"
 
       - name: Commit updated page
@@ -30,7 +33,6 @@ jobs:
       - name: Summary
         run: |
           echo "## 🚀 Deployed!" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
           echo "- **URL**: https://test.steveouyang.com" >> $GITHUB_STEP_SUMMARY
-          echo "- **Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Triggered by**: ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit**: \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **By**: ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
